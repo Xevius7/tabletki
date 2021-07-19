@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tabletki</string>
+
+    <string-array name = "thaStart">
+        <item>-40°C </item>
+        <item>0°C </item>
+    </string-array>
+
+    <string-array name="thaEnd">
+        <item>300°C</item>
+        <item>400°C</item>
+        <item>500°C</item>
+        <item>600°C</item>
+        <item>800°C</item>
+        <item>900°C</item>
+        <item>1000°C</item>
+        <item>1100°C</item>
+    </string-array>
+
+    <string-array name="PIType">
+        <item>50М</item>
+        <item>100M</item>
+        <item>100П</item>
+        <item>ТХА-ПИ3</item>
+        <item>ТХА-ПИ4</item>
+        <item>Pt100</item>
+    </string-array>
+
+    <string-array name="PT100Start">
+        <item>-50°C</item>
+        <item>-25°C</item>
+        <item>-20°C</item>
+        <item>0°C</item>
+    </string-array>
+
+    <string-array name="PT100End">
+        <item>50°C</item>
+        <item>80°C</item>
+        <item>100°C</item>
+        <item>150°C</item>
+        <item>200°C</item>
+        <item>250°C</item>
+        <item>300°C</item>
+        <item>400°C</item>
+        <item>500°C</item>
+        <item>600°C</item>
+    </string-array>
+
+    <string-array name="M100Start">
+        <item>-65</item>
+        <item>-55°C</item>
+        <item>-50°C</item>
+        <item>-25°C</item>
+        <item>-10°C</item>
+        <item>-5°C</item>
+        <item>0°C</item>
+    </string-array>
+
+    <string-array name="M100MEnd">
+        <item>50°C</item>
+        <item>60°C</item>
+        <item>80°C</item>
+        <item>100°C</item>
+        <item>120°C</item>
+        <item>150°C</item>
+        <item>180°C</item>
+    </string-array>
+
+
+</resources>
