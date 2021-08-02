@@ -22,9 +22,10 @@
         <item>50М</item>
         <item>100M</item>
         <item>100П</item>
+        <item>Pt100</item>
         <item>ТХА-ПИ3</item>
         <item>ТХА-ПИ4</item>
-        <item>Pt100</item>
+
     </string-array>
 
     <string-array name="PT100Start">
@@ -48,12 +49,7 @@
     </string-array>
 
     <string-array name="M100Start">
-        <item>-65</item>
-        <item>-55°C</item>
         <item>-50°C</item>
-        <item>-25°C</item>
-        <item>-10°C</item>
-        <item>-5°C</item>
         <item>0°C</item>
     </string-array>
 
