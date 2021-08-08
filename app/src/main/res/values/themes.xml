@@ -13,4 +13,27 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.Tabletki.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Tabletki.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Tabletki.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!-- Spinner style -->
+    <style name="spinnerItemStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">#07F52E</item>
+        <item name="android:textStyle">bold</item>
+
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment" tools:targetApi ="jelly_bean_mr1">center</item>
+    </style>
+    <!-- Spinner style drop down style -->
+    <style name="spinnerDropDownItemStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment" tools:targetApi ="jelly_bean_mr1">center</item>
+    </style>
 </resources>

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Tabletki</string>
 
-    <string-array name = "thaStart">
+    <string-array name="thaStart">
         <item>-40°C </item>
         <item>0°C </item>
     </string-array>
@@ -62,6 +62,7 @@
         <item>150°C</item>
         <item>180°C</item>
     </string-array>
+    <string name="title_activity_">Activity</string>
 
 
 </resources>
