@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:id="@+id/linearLayout2"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:baselineAligned="false"
+			android:orientation="horizontal">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/textView2"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:lines="2"
+					android:text="Тип ПИ"
+					android:textColor="#1F3CDC"
+					android:textSize="20sp"
+					android:textStyle="bold" />
+
+				<Spinner
+					android:id="@+id/type"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:background="@android:drawable/spinner_background"
+					android:dropDownWidth="wrap_content"
+					android:minHeight="52dp"
+					android:spinnerMode="dropdown"
+					android:theme="@style/spinnerItemStyle"
+					tools:ignore="SpeakableTextPresentCheck" />
+
+				<TextView
+					android:id="@+id/compens"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:text="TextView"
+					android:textColor="#E9651E"
+					android:textSize="16sp"
+					android:textStyle="bold" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/textView3"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:lines="2"
+					android:textColor="#1F3CDC"
+					android:text="Нижний предел"
+					android:textSize="20sp"
+					android:textStyle="bold" />
+
+				<Spinner
+					android:id="@+id/start"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:background="@android:drawable/spinner_background"
+					android:dropDownWidth="wrap_content"
+					android:minHeight="52dp"
+					android:spinnerMode="dialog"
+					android:theme="@style/spinnerItemStyle"
+					tools:ignore="SpeakableTextPresentCheck" />
+
+				<TextView
+					android:id="@+id/starteds"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:text="TextView"
+					android:textColor="#E91E63"
+					android:textSize="16sp"
+					android:textStyle="bold" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/textView4"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:lines="2"
+					android:textColor="#1F3CDC"
+					android:text="Верхний предел"
+					android:textSize="20sp"
+					android:textStyle="bold" />
+
+				<Spinner
+					android:id="@+id/end"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:background="@android:drawable/spinner_background"
+					android:dropDownWidth="wrap_content"
+					android:minHeight="52dp"
+					android:spinnerMode="dialog"
+					android:theme="@style/spinnerItemStyle"
+					tools:ignore="SpeakableTextPresentCheck" />
+
+				<TextView
+					android:id="@+id/endeds"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:text="TextView"
+					android:textColor="#E91E63"
+					android:textSize="16sp"
+					android:textStyle="bold" />
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<ToggleButton
+			android:id="@+id/tbtn"
+			android:layout_width="match_parent"
+			android:layout_height="102dp"
+			android:text="ToggleButton"
+			android:visibility="visible" />
+
+		<ImageView
+			android:id="@+id/image"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+</LinearLayout>
+
