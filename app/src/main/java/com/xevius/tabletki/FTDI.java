@@ -9,12 +9,13 @@ import android.widget.Toast;
 import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.FT_Device;
 
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 public class FTDI {
 	
 	
-	final Handler handler =  new Handler()
+	/*final Handler handler =  new Handler()
     {
     	@Override
     	public void handleMessage(Message msg)
@@ -25,8 +26,8 @@ public class FTDI {
 
     		}
     	}
-    };
-	
+    };*/
+
     
     static Context DeviceUARTContext;
 	D2xxManager ftdid2xx;
@@ -63,8 +64,7 @@ public class FTDI {
 			DeviceUARTContext = parentContext;
 			ftdid2xx = ftdid2xxContext;
 		}
-	
-    
+
 	public void createDeviceList()
 	{
 		int tempDevCount = ftdid2xx.createDeviceInfoList(DeviceUARTContext);
@@ -107,8 +107,7 @@ public class FTDI {
 			}
 		}
 	}
-	
-	
+
 	public void connectFunction()
 	{
 		int tmpProtNumber = openIndex + 1;
@@ -197,7 +196,6 @@ public class FTDI {
 	}*/
 	
 	public void SetConfig()
-	//public void SetConfig(int baud, byte dataBits, byte stopBits, byte parity, byte flowControl)
 	{
 		if (ftDev.isOpen() == false) {
 			Log.e("j2xx", "SetConfig: device not open");
@@ -210,8 +208,8 @@ public class FTDI {
 		uart_configured = true;
 		Toast.makeText(DeviceUARTContext, "Config done", Toast.LENGTH_SHORT).show();
 	}
-	
-	public void EnableRead (){    	
+
+	public void EnableRead (){
     	iEnableReadFlag = (iEnableReadFlag + 1)%2;
 
 		if(iEnableReadFlag == 1) {
@@ -224,18 +222,16 @@ public class FTDI {
 			//readEnButton.setText("Read Disabled");
 		}
     }
-	
-	
 
-	
 	public void SendMessage(int code) {
+
 		if (ftDev.isOpen() == false) {
 			Log.e("j2xx", "SendMessage: device not open");
 			return;
 		}
 
 		ftDev.setLatencyTimer((byte) 16);
-//		ftDev.purge((byte) (D2xxManager.FT_PURGE_TX | D2xxManager.FT_PURGE_RX))
+//		ftDev.purge((byte) (D2xxManager.FT_PURGE_TX | D2xxManager.FT_PURGE_RX))*/
 
 		int crc = 0;
 		byte [] OutData = {(byte)0xCA,0x35,0x19,0x00,(byte)code,(byte) 0xF6,
@@ -248,10 +244,14 @@ public class FTDI {
 		crc = 256- crc;
 		OutData[11] = (byte) crc;
 
-		ftDev.write(OutData, OutData.length);
+		//ftDev.write(OutData, OutData.length);
+		//PAUSE
+		try {
+			TimeUnit.MILLISECONDS.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
-
-	
 
 	private class readThread  extends Thread
 	{
@@ -261,7 +261,6 @@ public class FTDI {
 			mHandler = h;
 			this.setPriority(Thread.MIN_PRIORITY);
 		}
-		
 
 		@Override
 		public void run()
@@ -282,11 +281,12 @@ public class FTDI {
 							iavailable = readLength;
 						}
 						ftDev.read(readData, iavailable);
-						for (i = 0; i < iavailable; i++) {
-							readDataToText[i] = (char) readData[i];
-						}
-						Message msg = mHandler.obtainMessage();
-						mHandler.sendMessage(msg);
+
+						/*for (i = 0; i < iavailable; i++) {
+							readDataToText[i] = (char) readData[i];*/
+						//}
+						//Message msg = mHandler.obtainMessage();
+						//mHandler.sendMessage(msg);
 					}
 				}
 			}

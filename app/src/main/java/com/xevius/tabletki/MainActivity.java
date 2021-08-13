@@ -2,51 +2,30 @@ package com.xevius.tabletki;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.ftdi.j2xx.D2xxManager;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.stream.IntStream;
-import java.lang.Integer;
 
-
-public class MainActivity extends AppCompatActivity implements
-        OnCheckedChangeListener {
-
+public class MainActivity extends AppCompatActivity {
 
     Spinner startspiner,endspiner,typespiner;
     TextView starteds,endeds,compens;
-    double startTEMP=0,endTEMP=0,Comp85=0;
+    int startTEMP=0,endTEMP=0;
+    double Comp85=0;
     SpinnerAdapter type_Adapter;
-    public ToggleButton tbtn;
+    Button btn;
 
     String xt;
     String type_Choice = "50М";
-    Timer timer =new Timer();
 
     double A= 4.28E-3; //100M
     double B = -6.2032E-7;
@@ -55,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements
     double AA = 3.9690E-3; //100П
     double BB = -5.841E-7;
     double CC = -4.33E-12;
+    int bflag=0;
 
     double[] K={
             -0.017600414,   //A0
@@ -77,16 +57,12 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-            byte code = 0;
-
-
 
         //IntentFilter filter = new IntentFilter();
         //filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         //filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         //filter.setPriority(500);
         //this.registerReceiver(mUsbReceiver,filter);
-
 
         starteds = findViewById(R.id.starteds);
         endeds = findViewById(R.id.endeds);
@@ -95,10 +71,11 @@ public class MainActivity extends AppCompatActivity implements
         typespiner = Create_typespiner();
         startspiner = Create_startspiner(type_Choice);
         endspiner = Create_endspiner(type_Choice);
-        //ImageView img = findViewById(R.id.image);
-        tbtn = findViewById(R.id.tbtn);
 
-        tbtn.setOnCheckedChangeListener(this);
+        //ImageView img = findViewById(R.id.image);
+        btn = findViewById(R.id.btn);
+
+        //tbtn.setOnCheckedChangeListener(this);
 
         try {
             ftD2xx = D2xxManager.getInstance(this);
@@ -107,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         eni = new FTDI(this , ftD2xx);
 
-        timer.schedule( new UpdateTimerTask(),0,1000);
     }
 
     @Override
@@ -135,35 +111,66 @@ public class MainActivity extends AppCompatActivity implements
         super.onStop();
     }
 
-    @Override
-
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked & eni.DevCount!=-1)
-        {    tbtn.setTextOn("Send");
-            eni.SendMessage(0x0E);//TAB
-            eni.SendMessage(0x0B);//Mode
-            eni.SendMessage(0x0B);//Mode
-            //eni.readData
-            //eni.SendMessage(0x0B);//Mode
-            //eni.SendMessage(0x0A);//Shift
-            //eni.SendMessage(0x0A);//Shift
-            //eni.SendMessage(0x0A);//Shift
-            //eni.SendMessage(0x09);//>t
-            //eni.SendMessage(0x0E);//TAB
-            //eni.SendMessage(0x05);//6
-            //eni.SendMessage(0x09);//0
-            //eni.SendMessage(0x09);//0
-            //eni.SendMessage(0x09);//0
+    public void btnSetTempEni (View v)
+    {
+        if (eni.DevCount == -1) {return;}
+        switch (bflag) {
+            case 0: //First
+                prepareTempEni();
+            case 1: //tempeni_start
+                setTempEni(startTEMP*10);
+                eni.SendMessage(0x0D);//Save
+                bflag = 2;
+                break;
+            case 2://tempeni_end
+                setTempEni(endTEMP);
+                eni.SendMessage(0x0D);//Save
+                bflag = 1;
         }
-        else
-            tbtn.setTextOff("ЫЫЫ");
+    }
+
+    public byte parseTemp(char c){
+        if (c=='0') return 0x09;
+        int n;
+        n= Character.getNumericValue(c);
+        n+=9;
+        n%=10;
+    return (byte)n;
+    }
+
+    public void prepareTempEni() {
+        eni.SendMessage(0x0E);//TAB
+        eni.SendMessage(0x0B);//Mode
+        eni.SendMessage(0x0B);//Mode
+        eni.SendMessage(0x0B);//Mode
+        eni.SendMessage(0x0A);//Shift
+        eni.SendMessage(0x0A);//Shift
+        eni.SendMessage(0x0A);//Shift
+        eni.SendMessage(0x09);//>t<
+        eni.SendMessage(0x0E);//TAB
+    }
+
+    public void setTempEni(int temp){
+        xt = String.valueOf(temp);
+        char c;
+        int i=0;
+        byte code;
+        do {
+            c = xt.charAt(i);
+            if (Character.isDigit(c)) {
+                code = parseTemp(c);
+                eni.SendMessage(code);
+            } else {eni.SendMessage(0x0B);/*  -  */}
+            i++;
+        }
+        while (i<xt.length());
     }
 
     public Spinner Create_typespiner() {
-        Spinner typespiner = (Spinner) findViewById(R.id.type);
+        typespiner = findViewById(R.id.type);
         String[] type_Array = getResources().getStringArray(
                 R.array.PIType);
-        type_Adapter = new ArrayAdapter<String>(
+        type_Adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 type_Array);
         typespiner.setAdapter(type_Adapter);
@@ -174,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public Spinner Create_startspiner(String type_Choice) {
         String[] start_Array = null;
-        Spinner startspiner = (Spinner) findViewById(R.id.start);
+        startspiner = findViewById(R.id.start);
         switch (type_Choice){
             case "Pt100":
             case "100П":
@@ -193,18 +200,18 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
-        SpinnerAdapter start_Adapter = new ArrayAdapter<String>(
+        SpinnerAdapter start_Adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 start_Array);
         startspiner.setAdapter(start_Adapter);
         startspiner
-                .setOnItemSelectedListener(new startspiner_Listener());
+                .setOnItemSelectedListener(new spiner_Listener());
         return startspiner;
     }
 
     public Spinner Create_endspiner(String type_Choice) {
         String[] end_Array = null;
-        Spinner endspiner = (Spinner) findViewById(R.id.end);
+        endspiner = findViewById(R.id.end);
         switch (type_Choice){
             case "Pt100":
             case "100П":
@@ -222,12 +229,12 @@ public class MainActivity extends AppCompatActivity implements
                         R.array.thaEnd);
         }
 
-        SpinnerAdapter end_Adapter = new ArrayAdapter<String>(
+        SpinnerAdapter end_Adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 end_Array);
         endspiner.setAdapter(end_Adapter);
         endspiner
-                .setOnItemSelectedListener(new startspiner_Listener());
+                .setOnItemSelectedListener(new spiner_Listener());
         return endspiner;
     }
 
@@ -239,9 +246,12 @@ public class MainActivity extends AppCompatActivity implements
             //type_Adapter.notifyDataSetChanged();
             type_Choice = type_Adapter_View
                     .getItemAtPosition(position).toString();
+            if (type_Choice.equals("ТХА-ПИ4") || type_Choice.equals("ТХА-ПИ3")) {
+                    btn.setVisibility(View.VISIBLE);}
+            else    btn.setVisibility(View.INVISIBLE);
+
             Create_startspiner(type_Choice);
             Create_endspiner(type_Choice);
-
         }
 
         public void onNothingSelected(AdapterView<?> arg0) {
@@ -251,11 +261,12 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public class startspiner_Listener implements
+    public class spiner_Listener implements
             OnItemSelectedListener {
 
         public void onItemSelected(AdapterView<?> Category_Add_Adapter_View,
                                    View v, int position, long row) {
+            set_T_or_R_Text();
         }
 
         public void onNothingSelected(AdapterView<?> arg0) {
@@ -314,15 +325,14 @@ public class MainActivity extends AppCompatActivity implements
         return Rt;
     }
 
-    class UpdateTimerTask extends TimerTask{
-        public void run(){
+    public void set_T_or_R_Text(){
             xt = startspiner.getSelectedItem().toString();
             xt = xt.split("°C")[0];
-            startTEMP = Double.parseDouble(xt);
+            startTEMP = Integer.parseInt(xt);
 
             xt = endspiner.getSelectedItem().toString();
             xt = xt.split("°C")[0];
-            endTEMP = Double.parseDouble(xt);
+            endTEMP = Integer.parseInt(xt);
 
             switch (type_Choice){
                 case ("ТХА-ПИ4"):
@@ -342,4 +352,4 @@ public class MainActivity extends AppCompatActivity implements
                 compens.setText(""); }
         }
     }
-    }
+
