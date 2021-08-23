@@ -3,6 +3,8 @@ package com.xevius.tabletki;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +15,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
 
 import com.ftdi.j2xx.D2xxManager;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public static D2xxManager ftD2xx = null;
     FTDI eni;
 
-    @Override
+   @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,11 +123,13 @@ public class MainActivity extends AppCompatActivity {
             case 1: //tempeni_start
                 setTempEni(startTEMP*10);
                 eni.SendMessage(0x0D);//Save
+                btn.setText(""+ startTEMP);
                 bflag = 2;
                 break;
             case 2://tempeni_end
-                setTempEni(endTEMP);
+                setTempEni(endTEMP*10);
                 eni.SendMessage(0x0D);//Save
+                btn.setText(""+ endTEMP);
                 bflag = 1;
         }
     }
@@ -351,5 +356,6 @@ public class MainActivity extends AppCompatActivity {
                 endeds.setText(String.format("%.2f",TempToR(endTEMP,type_Choice))+" Ω");
                 compens.setText(""); }
         }
+
     }
 

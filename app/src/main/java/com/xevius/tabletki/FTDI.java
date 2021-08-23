@@ -1,9 +1,6 @@
 package com.xevius.tabletki;
 
-
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 import com.ftdi.j2xx.D2xxManager;
@@ -13,22 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 public class FTDI {
-	
-	
-	/*final Handler handler =  new Handler()
-    {
-    	@Override
-    	public void handleMessage(Message msg)
-    	{
-    		if(iavailable > 0)
-    		{
-    			//readText.append(String.copyValueOf(readDataToText, 0, iavailable));
 
-    		}
-    	}
-    };*/
-
-    
     static Context DeviceUARTContext;
 	D2xxManager ftdid2xx;
 	FT_Device ftDev = null;
@@ -43,20 +25,15 @@ public class FTDI {
     byte dataBit = D2xxManager.FT_DATA_BITS_8;
     byte parity = D2xxManager.FT_PARITY_NONE;
     byte flowControl = D2xxManager.FT_FLOW_NONE;
-    int portNumber = 1;
-    //ArrayList<CharSequence> portNumberList;
-	
+
 	public static final int readLength = 512;
     public int readcount = 0;
     public int iavailable = 0;
     byte[] readData;
     char[] readDataToText;
-    public boolean bReadThreadGoing = false;
-    public readThread read_thread;
 
     boolean uart_configured = false;
-	static int iEnableReadFlag = 1;
-	
+
 	public FTDI (){}
 	
 	public FTDI (Context parentContext, D2xxManager ftdid2xxContext)
@@ -74,7 +51,6 @@ public class FTDI {
 			if( DevCount != tempDevCount )
 			{
 				DevCount = tempDevCount;
-				//updatePortNumberSelector();
 			}
 		}
 		else
@@ -88,7 +64,7 @@ public class FTDI {
 	{
 		DevCount = -1;
 		currentIndex = -1;
-		bReadThreadGoing = false;
+		//bReadThreadGoing = false;
 		try {
 			Thread.sleep(50);
 		}
@@ -143,58 +119,13 @@ public class FTDI {
 		{
 			currentIndex = openIndex;
 			Toast.makeText(DeviceUARTContext, "open device port(" + tmpProtNumber + ") OK", Toast.LENGTH_SHORT).show();
-
-			if(false == bReadThreadGoing)
-			{
-				//read_thread = new readThread(handler);
-				//read_thread.start();
-				//bReadThreadGoing = true;
-			}
 		}
 		else 
 		{			
 			Toast.makeText(DeviceUARTContext, "open device port(" + tmpProtNumber + ") NG", Toast.LENGTH_LONG).show();
-			//Toast.makeText(DeviceUARTContext, "Need to get permission!", Toast.LENGTH_SHORT).show();			
 		}
 	}
-	
-	/*public void updatePortNumberSelector()
-	{
-		//Toast.makeText(DeviceUARTContext, "updatePortNumberSelector:" + DevCount, Toast.LENGTH_SHORT).show();
 
-		if(DevCount == 2)
-		{
-			portAdapter = ArrayAdapter.createFromResource(DeviceUARTContext, R.array.port_list_2,
-														  R.layout.my_spinner_textview);
-			portAdapter.setDropDownViewResource(R.layout.my_spinner_textview);
-			portSpinner.setAdapter(portAdapter);
-			portAdapter.notifyDataSetChanged();
-			Toast.makeText(DeviceUARTContext, "2 port device attached", Toast.LENGTH_SHORT).show();
-			//portSpinner.setOnItemSelectedListener(new MyOnPortSelectedListener());
-		}
-		else if(DevCount == 4)
-		{
-			portAdapter = ArrayAdapter.createFromResource(DeviceUARTContext, R.array.port_list_4,
-														  R.layout.my_spinner_textview);
-			portAdapter.setDropDownViewResource(R.layout.my_spinner_textview);
-			portSpinner.setAdapter(portAdapter);
-			portAdapter.notifyDataSetChanged();
-			Toast.makeText(DeviceUARTContext, "4 port device attached", Toast.LENGTH_SHORT).show();
-			//portSpinner.setOnItemSelectedListener(new MyOnPortSelectedListener());
-		}
-		else
-		{
-			portAdapter = ArrayAdapter.createFromResource(DeviceUARTContext, R.array.port_list_1,
-														  R.layout.my_spinner_textview);
-			portAdapter.setDropDownViewResource(R.layout.my_spinner_textview);
-			portSpinner.setAdapter(portAdapter);
-			portAdapter.notifyDataSetChanged();	
-			Toast.makeText(DeviceUARTContext, "1 port device attached", Toast.LENGTH_SHORT).show();
-			//portSpinner.setOnItemSelectedListener(new MyOnPortSelectedListener());
-		}
-
-	}*/
-	
 	public void SetConfig()
 	{
 		if (ftDev.isOpen() == false) {
@@ -209,20 +140,6 @@ public class FTDI {
 		Toast.makeText(DeviceUARTContext, "Config done", Toast.LENGTH_SHORT).show();
 	}
 
-	public void EnableRead (){
-    	iEnableReadFlag = (iEnableReadFlag + 1)%2;
-
-		if(iEnableReadFlag == 1) {
-			ftDev.purge((byte) (D2xxManager.FT_PURGE_TX));
-			ftDev.restartInTask();
-			//readEnButton.setText("Read Enabled");
-		}
-		else{
-			ftDev.stopInTask();
-			//readEnButton.setText("Read Disabled");
-		}
-    }
-
 	public void SendMessage(int code) {
 
 		if (ftDev.isOpen() == false) {
@@ -231,7 +148,6 @@ public class FTDI {
 		}
 
 		ftDev.setLatencyTimer((byte) 16);
-//		ftDev.purge((byte) (D2xxManager.FT_PURGE_TX | D2xxManager.FT_PURGE_RX))*/
 
 		int crc = 0;
 		byte [] OutData = {(byte)0xCA,0x35,0x19,0x00,(byte)code,(byte) 0xF6,
@@ -244,7 +160,7 @@ public class FTDI {
 		crc = 256- crc;
 		OutData[11] = (byte) crc;
 
-		//ftDev.write(OutData, OutData.length);
+		ftDev.write(OutData, OutData.length);
 		//PAUSE
 		try {
 			TimeUnit.MILLISECONDS.sleep(10);
@@ -253,46 +169,5 @@ public class FTDI {
 		}
     }
 
-	private class readThread  extends Thread
-	{
-		Handler mHandler;
-
-		readThread(Handler h){
-			mHandler = h;
-			this.setPriority(Thread.MIN_PRIORITY);
-		}
-
-		@Override
-		public void run()
-		{
-			int i;
-			while(true == bReadThreadGoing)
-			{
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-				}
-
-				synchronized(ftDev)
-				{
-					iavailable = ftDev.getQueueStatus();				
-					if (iavailable > 0) {
-						if(iavailable > readLength){
-							iavailable = readLength;
-						}
-						ftDev.read(readData, iavailable);
-
-						/*for (i = 0; i < iavailable; i++) {
-							readDataToText[i] = (char) readData[i];*/
-						//}
-						//Message msg = mHandler.obtainMessage();
-						//mHandler.sendMessage(msg);
-					}
-				}
-			}
-		}
-
-		
-	}
 }
 
