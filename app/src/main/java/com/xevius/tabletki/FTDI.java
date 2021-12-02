@@ -140,34 +140,5 @@ public class FTDI {
 		Toast.makeText(DeviceUARTContext, "Config done", Toast.LENGTH_SHORT).show();
 	}
 
-	public void SendMessage(int code) {
-
-		if (ftDev.isOpen() == false) {
-			Log.e("j2xx", "SendMessage: device not open");
-			return;
-		}
-
-		ftDev.setLatencyTimer((byte) 16);
-
-		int crc = 0;
-		byte [] OutData = {(byte)0xCA,0x35,0x19,0x00,(byte)code,(byte) 0xF6,
-				(byte) 0xCB,0x00,(byte) 0xD0,0x20,0x18,(byte)crc};
-		int[] OutDataI = new int[OutData.length];
-		for (int i=0;i<OutData.length; OutDataI[i] = OutData [i++]);
-
-		crc = IntStream.of(OutDataI).sum();
-		crc = crc & 0xff;
-		crc = 256- crc;
-		OutData[11] = (byte) crc;
-
-		ftDev.write(OutData, OutData.length);
-		//PAUSE
-		try {
-			TimeUnit.MILLISECONDS.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-    }
-
 }
 
